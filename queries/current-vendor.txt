@@ -1,0 +1,23 @@
+--Connection string
+DSN=ODIN;UID=USER;PWD=PASS;DBQ=DB4;DBA=W;APA=T;EXC=F;FEN=T;QTO=T;FRC=10;FDL=10;LOB=T;RST=T;BTD=F;BNF=F;BAM=IfAllSuccessful;NUM=NLS;DPM=F;MTS=T;MDI=F;CSR=F;FWC=F;FBS=64000;TLO=O;MLD=0;ODA=F;
+
+--Query
+select A.red,A.tec,A.estacion
+from(
+SELECT DISTINCT(RED||ESTACION)estacion_1, MAX(FECHA)fecha,red,tec,estacion
+FROM KPI_EEBB.HTT_KPIS_EEBB
+where fecha >= trunc (sysdate -30)
+--and ESTACION = 'EEBB_1_1'
+GROUP BY RED||ESTACION,red,tec,estacion
+) A
+inner join
+(
+SELECT DISTINCT(RED||ESTACION)estacion_1, MAX(FECHA)fecha
+FROM KPI.HTT_KPIS_EEBB
+where fecha >= trunc (sysdate -30)
+--and ESTACION = 'EEBB_1_1'
+GROUP BY RED||ESTACION
+) B
+ON
+A.estacion_1=B.estacion_1
+and A.fecha=B.fecha
